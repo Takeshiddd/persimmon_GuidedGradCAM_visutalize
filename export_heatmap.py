@@ -52,20 +52,21 @@ def toHeatmap(x, cmap='seismic'):
     x = np.array([cm(int(np.round(xi)))[:3] for xi in x])
     return x.reshape(h, w, 3)
 
-def make_directry(dir_paths):
+def make_directory(dir_paths):
     for dir_path in dir_paths:
         if not os.path.isdir(dir_path):
             os.mkdir(dir_path)
 
 if __name__ == "__main__":
-    abs_weight = False # Trueの場合，青が0，赤が最大の画像，Falseの場合青がマイナス，赤がプラスの画像
-    alpha = 0.5 # 大きいほどヒートマップが濃くなる
-    data_name = 'GCC-raw-data' # 読み込むjsonデータの名前を指定
+    abs_weight = False # when True: 0 -- blue, max -- red / when False: negative value -- blue, positive value -- red
+    alpha = 0.5 # rate of heatmap to the image
+    data_name = 'GCC-raw-data' # name of json file of input  
 
-    # ディレクトリチェック&作成
+    # make dir
     vis_path = 'GuidedGradCAM_visualization'
     vis_with_image_path = 'GuidedGradCAM_visualization_with_image'
-    make_directry([vis_path, vis_with_image_path])
+    semistic_vis_path = 'GuidedGradCAM_visualization_seismic'
+    make_directory([vis_path, vis_with_image_path, semistic_vis_path])
 
     if abs_weight:
         get_feature_with_image = get_guidedgradcam_to_rgb_with_image_abs
@@ -75,15 +76,14 @@ if __name__ == "__main__":
     with open(os.path.join('GuidedGradCAM_data', data_name + '.json')) as f:
         data_dict = json.load(f)
 
-
     cmap = matplotlib.cm.seismic
     for im_name in tqdm(data_dict):
         image = plt.imread(os.path.join('GGC-pictures', im_name))
         guidedgradcam = np.array(data_dict[im_name])
         guidedgradcam_with_im = get_feature_with_image(guidedgradcam[np.newaxis], reshaped_size=image.shape[:2])
         ##################################### GuidedGradCAM_visualization #####################################
-        # guidedgradcam_feature = get_guidedgradcam_feature(guidedgradcam, image_size=image.shape[:2])
-        # plt.imsave(os.path.join('GuidedGradCAM_visualization', im_name), guidedgradcam_feature.astype(np.uint8))
+        guidedgradcam_feature = get_guidedgradcam_feature(guidedgradcam, image_size=image.shape[:2])
+        plt.imsave(os.path.join(vis_path, im_name), guidedgradcam_feature.astype(np.uint8))
         
         ################################# GuidedGradCAM_visualization_seismic #################################
         fig = plt.figure(figsize=(8,6))
@@ -104,11 +104,11 @@ if __name__ == "__main__":
         ax.imshow(guidedgradcam_with_im.astype(np.uint8))
         norm = matplotlib.colors.Normalize(vmin=-1, vmax=1)
         cb = matplotlib.colorbar.ColorbarBase(ax2, cmap=cmap, norm=norm, orientation='vertical')
-        fig.savefig(os.path.join('GuidedGradCAM_visualization_seismic', im_name))
+        fig.savefig(os.path.join(semistic_vis_path, im_name))
 
         ############################### GuidedGradCAM_visualization_with_image ###############################
         guidedgradcam_with_im = image  * (1 - alpha) + guidedgradcam_with_im * alpha
-        plt.imsave(os.path.join('GuidedGradCAM_visualization_with_image', im_name), guidedgradcam_with_im.astype(np.uint8))
+        plt.imsave(os.path.join(vis_with_image_path, im_name), guidedgradcam_with_im.astype(np.uint8))
         
 
 

@@ -4,7 +4,8 @@ import glob
 import os
 import json
 
-rawdata_name = 'GGC-raw-data'  # 読み込むrawデータの名前を指定
+# specify raw data of guided grad cam exoprted by Batch-backpropagations_saveRawData_VGG16_AkagiLab.py
+rawdata_name = 'GGC-raw-data'  
 path_list = glob.glob(os.path.join('GGC-pictures', '*'))
 data_dict = {}
 

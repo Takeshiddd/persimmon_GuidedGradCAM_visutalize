@@ -92,7 +92,11 @@ def get_GuidedGradCAM_weight(data_dict, im_name, reshaped_size=None):
         _map = cv2.resize(_map, reshaped_size[::-1])
     _map /= _map.max()
     return _map
-
+    
+def make_directory(dir_paths):
+    for dir_path in dir_paths:
+        if not os.path.isdir(dir_path):
+            os.mkdir(dir_path)
 
 # path arangement
 combined_data_root = 'GGC-pictures_bg_cut'
@@ -102,6 +106,7 @@ histgram = 'histgram'
 hist_data = os.path.join(histgram, 'hist_data')
 
 if __name__ == "__main__":
+    make_directory([combined_data_root, binary_data_root, binary_data_root, histgram, hist_data])
     read_file = True  
     dist_normalize = True    # 距離を0-1に正規化する場合True
     conditional = True  # 輪郭からの距離の違いによる画素数不均一を正規化する場合True
@@ -169,8 +174,8 @@ if __name__ == "__main__":
             ax.set_yticks(np.linspace(0, num_weight_bins, 5))
             ax.set_yticklabels(np.linspace(0, 1, 5))
             fig.colorbar(im, ax=ax)
-            make_directry([os.path.join('histgram', 'histgram_each_image' + tag)]) # ディレクトリの有無をチェック&なければ作成
-            plt.savefig(os.path.join('histgram', 'histgram_each_image' + tag, im_name + '.png'))
+            make_directry([os.path.join(histgram, 'histgram_each_image' + tag)]) # ディレクトリの有無をチェック&なければ作成
+            plt.savefig(os.path.join(histgram, 'histgram_each_image' + tag, im_name + '.png'))
             plt.close(fig)
 
 
@@ -179,15 +184,15 @@ if __name__ == "__main__":
         Hy_0 = Hy_0[0]
 
         # ヒストグラムの配列データを出力
-        np.save(os.path.join('histgram', 'hist_data',  'dist-weight_hist2d' + tag + '.npy'), H_0)
-        np.save(os.path.join('histgram', 'hist_data', 'dist_hist' + tag + '.npy'), Hx_0)
-        np.save(os.path.join('histgram', 'hist_data', 'weight_hist' + tag + '.npy'), Hy_0)
+        np.save(os.path.join(hist_data,  'dist-weight_hist2d' + tag + '.npy'), H_0)
+        np.save(os.path.join(hist_data, 'dist_hist' + tag + '.npy'), Hx_0)
+        np.save(os.path.join(hist_data, 'weight_hist' + tag + '.npy'), Hy_0)
     
     else: # readfile=Trueの場合の処理
         # ヒストグラムの配列データを読み込み
-        H_0 = np.load(os.path.join('histgram', 'hist_data', 'dist-weight_hist2d' + tag + '.npy'))
-        Hx_0 = np.load(os.path.join('histgram', 'hist_data', 'dist_hist' + tag + '.npy'))
-        Hy_0 = np.load(os.path.join('histgram', 'hist_data', 'weight_hist' + tag + '.npy'))
+        H_0 = np.load(os.path.join(hist_data, 'dist-weight_hist2d' + tag + '.npy'))
+        Hx_0 = np.load(os.path.join(hist_data, 'dist_hist' + tag + '.npy'))
+        Hy_0 = np.load(os.path.join(hist_data, 'weight_hist' + tag + '.npy'))
     
     
     fig = plt.figure()
@@ -212,6 +217,6 @@ if __name__ == "__main__":
     ax.set_yticks(np.linspace(0, num_weight_bins, 5))
     ax.set_yticklabels(np.linspace(0, 1, 5))
     fig.colorbar(im, ax=ax)
-    make_directry([os.path.join('histgram', 'histgram_all_images')]) # ディレクトリの有無をチェック&なければ作成
-    plt.savefig(os.path.join('histgram', 'histgram_all_images', 'dist-weight_hist' + tag + '.png'))
+    make_directry([os.path.join(histgram, 'histgram_all_images')]) # ディレクトリの有無をチェック&なければ作成
+    plt.savefig(os.path.join(histgram, 'histgram_all_images', 'dist-weight_hist' + tag + '.png'))
     plt.show()

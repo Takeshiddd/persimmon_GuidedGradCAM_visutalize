@@ -1,9 +1,10 @@
+GGC-pictures/*.JPG
 GGC-pictures_bg_cut/*
 GGC-pictures_binary/*
+GGC-pictures_distanse_transform/*
 GuidedGradCAM_data/*
 GuidedGradCAM_visualization/*
 GuidedGradCAM_visualization_seismic/*
 GuidedGradCAM_visualization_with_image/*
-histgram/*/*
+histgram/*
 raw_data/*
-
