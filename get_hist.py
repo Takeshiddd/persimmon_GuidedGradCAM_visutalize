@@ -107,7 +107,7 @@ hist_data = os.path.join(histgram, 'hist_data')
 
 if __name__ == "__main__":
     make_directory([combined_data_root, binary_data_root, binary_data_root, histgram, hist_data])
-    read_file = True  
+    read_file = True  # True if use caches in histgram/hist_data
     dist_normalize = True    # 距離を0-1に正規化する場合True
     conditional = True  # 輪郭からの距離の違いによる画素数不均一を正規化する場合True
     data_name = 'GCC-raw-data' # 読み込むjsonデータの名前を指定

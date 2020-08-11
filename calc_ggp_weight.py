@@ -15,6 +15,8 @@ def make_directory(dir_paths):
         if not os.path.isdir(dir_path):
             os.mkdir(dir_path)
             
+
+model_path = "./models/vgg16/Thres1_sgd0.001_epoch30_batch32.h5"
 # limits tensorflow to a specific GPU
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
@@ -23,7 +25,7 @@ raw_data = 'raw_data'
 make_directory([raw_data])
 
 
-model = load_model("./models/vgg16/Thres1_sgd0.001_epoch30_batch32.h5") # input VGG trained model
+model = load_model(model_path) # input VGG trained model
 # model.load_weights("models/tensorlog/inceptionV3/weights.36-0.96-0.84.hdf5")
 model.layers[-2].name='dense_1_'
 model.summary()
